@@ -14,6 +14,8 @@
 
 package amqp091go
 
+import amqp "github.com/rabbitmq/amqp091-go"
+
 type RabbitRequest struct {
 	operationName   string
 	destinationName string
@@ -21,4 +23,15 @@ type RabbitRequest struct {
 	bodySize        int64
 	conversationID  string
 	headers         map[string]interface{}
+}
+
+func NewRabbitMQProcessOtelRequest(spanName string, msg *amqp.Delivery) RabbitRequest {
+	return RabbitRequest{
+		operationName:   "process",
+		destinationName: spanName,
+		headers:         msg.Headers,
+		bodySize:        int64(len(msg.Body)),
+		messageId:       msg.MessageId,
+		conversationID:  msg.CorrelationId,
+	}
 }

@@ -138,3 +138,16 @@ func BuildRabbitMQPublishOtelInstrumenter() *instrumenter.PropagatingToDownstrea
 		}, otel.GetTextMapPropagator())
 
 }
+func BuildRabbitMQProcessOtelInstrumenter() *instrumenter.PropagatingFromUpstreamInstrumenter[RabbitRequest, any] {
+	builder := instrumenter.Builder[RabbitRequest, any]{}
+	return builder.Init().SetSpanNameExtractor(&message.MessageSpanNameExtractor[RabbitRequest, any]{Getter: RabbitMQGetter{}, OperationName: message.PROCESS}).
+		SetSpanKindExtractor(&instrumenter.AlwaysConsumerExtractor[RabbitRequest]{}).
+		AddAttributesExtractor(&message.MessageAttrsExtractor[RabbitRequest, any, RabbitMQGetter]{Operation: message.PROCESS}).
+		SetInstrumentationScope(instrumentation.Scope{
+			Name:    utils.AMQP091GO_SCOPE_NAME,
+			Version: version.Tag,
+		}).
+		BuildPropagatingFromUpstreamInstrumenter(func(n RabbitRequest) propagation.TextMapCarrier {
+			return &carrierGetter{req: n}
+		}, otel.GetTextMapPropagator())
+}
