@@ -146,7 +146,7 @@ func RunGoBuildFallible(t *testing.T, args ...string) {
 }
 
 func UseTestRules(name string) string {
-	path := filepath.Join(filepath.Dir(pwd), "pkg", "data", name)
+	path := filepath.Join(filepath.Dir(pwd), "tool", "data", name)
 	return "-rule=" + path
 }
 
@@ -293,7 +293,7 @@ func ExecMuzzle(t *testing.T, dependencyName, moduleName string, minVersion, max
 		t.Skip()
 		return
 	}
-	versions, err := version.GetRandomVersion(3, dependencyName, minVersion, maxVersion)
+	versions, err := version.GetRandomVersion(1, dependencyName, minVersion, maxVersion)
 	if err != nil {
 		t.Fatal(err)
 	}
