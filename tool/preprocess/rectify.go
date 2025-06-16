@@ -46,9 +46,9 @@ func (dp *DepProcessor) findModCacheDir() (string, error) {
 		// fall back to using the remote pkg module.
 		return config.BuildPath, nil
 	}
-
-	modulePath := "github.com/alibaba/opentelemetry-go-auto-instrumentation/pkg@f55e1e8"
-	output, err := runCmdCombinedOutput(dp.getGoModDir(),
+	pkgVersion := config.UsedPkg
+	modulePath := pkgPrefix + "@" + pkgVersion
+	output, err := runCmdCombinedOutput(dp.getGoModDir(), nil,
 		"go", "mod", "download", "-json", modulePath)
 	if err != nil {
 		return "", err
